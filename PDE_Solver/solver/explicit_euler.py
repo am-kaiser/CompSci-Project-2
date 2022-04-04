@@ -1,10 +1,9 @@
 """Script to perform explicit Euler algorithm."""
-from solver import parameters
-from utils import plot_solution
+from PDE_Solver.solver import parameters
+from PDE_Solver.utils import plot_solution
 
 import numpy as np
 import matplotlib.pyplot as plt
-import time
 
 
 def initialize_output(input_params):
@@ -14,8 +13,8 @@ def initialize_output(input_params):
 
 
 def create_grid(input_params):
-    x_values = np.linspace(input_params.x_start, input_params.x_end_cm, num=input_params.num_x_steps).astype(int)
-    t_values = np.linspace(input_params.t_start, input_params.t_end_s, num=input_params.num_time_steps).astype(int)
+    x_values = np.linspace(input_params.x_start, input_params.x_end, num=input_params.num_x_steps)
+    t_values = np.linspace(input_params.t_start, input_params.t_end, num=input_params.num_time_steps)
 
     return x_values, t_values
 
@@ -31,24 +30,30 @@ def define_boundary_conditions(u_values, x_values):
     return u_values
 
 
-def perform_euler_algorithm(u_values, x_values, t_values, input_params):
+def perform_euler_algorithm(u_values, input_params):
     alpha = input_params.dt / input_params.dx
 
-    t_indices = range(input_params.num_time_steps)
-    x_indices = range(input_params.num_x_steps)
+    t_indices = range(input_params.num_time_steps + 1)  # r range does not include right boundary. i.e. range(1)=0
+    x_indices = range(input_params.num_x_steps + 1)
 
-    for t_index in t_indices[:-1]:
+    for t_index in t_indices[0:-2]:
         for x_index in x_indices[1:-2]:
-            u_values[x_index, t_index + 1] = alpha * u_values[x_index + 1, t_index] +\
-                                         (1-2*alpha) * u_values[x_index, t_index] +\
-                                         alpha * u_values[x_index - 1, t_index]
-
-            plot_solution.plot_3d_solution(t_values, x_values, u_values, 't [s]', 'x [cm]', 'u', value_range=[-10,10])
-            plt.show()
-            time.sleep(0.1)
-            plt.close('all')
+            u_values[x_index, t_index + 1] = alpha * u_values[x_index + 1, t_index] + \
+                                             (1 - 2 * alpha) * u_values[x_index, t_index] + \
+                                             alpha * u_values[x_index - 1, t_index]
 
     return u_values
+
+
+def explicit_solution(u_values_exp, x_values, t_values, input_params):
+    t_indices = range(input_params.num_time_steps)  # r range does not include right boundary. i.e. range(1)=0
+    x_indices = range(input_params.num_x_steps)
+
+    for t_index in t_indices:
+        for x_index in x_indices:
+            u_values_exp[x_index, t_index] = np.sin(np.pi * x_values[x_index]) * np.exp(-t_values[t_index] * np.pi ** 2)
+
+    return u_values_exp
 
 
 def solve_pde_euler():
@@ -56,20 +61,28 @@ def solve_pde_euler():
     params = parameters.Parameters()
 
     # Initialize output array
-    u = initialize_output(params)
+    u_euler = initialize_output(params)
+    u_explicit = initialize_output(params)
 
     # Create grid
     x, t = create_grid(params)
 
+    # EULER ALGORITHM
     # Apply initial conditions
-    u = define_initial_conditions(u)
-
+    u_euler = define_initial_conditions(u_euler)
     # Apply boundary conditions
-    u = define_boundary_conditions(u, x)
-
+    u_euler = define_boundary_conditions(u_euler, x)
     # Perform Euler algorithm
-    u = perform_euler_algorithm(u, x, t, params)
+    u_euler = perform_euler_algorithm(u_euler, params)
+
+    # EXPLICIT SOLUTION
+    u_explicit = explicit_solution(u_explicit, x, t, params)
+
+    # ERROR
+    error = u_explicit-u_euler
 
     # Plot solution
-    plot_solution.plot_3d_solution(t, x, u, 't [s]', 'x [cm]', 'u', value_range=[0,1])
+    plot_solution.plot_3d_solution(t, x, u_euler, 't [s]', 'x', 'EULER: u')#, value_range=[-0.5, 0.5])
+    plot_solution.plot_3d_solution(t, x, u_explicit, 't [s]', 'x [cm]', 'EXPLICIT: u')#, value_range=[-2.2e-14, 2e-15])
+    plot_solution.plot_3d_solution(t, x, error, 't [s]', 'x [cm]', 'ERROR')
     plt.show()
