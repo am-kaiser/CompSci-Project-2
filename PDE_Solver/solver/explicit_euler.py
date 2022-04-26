@@ -79,10 +79,10 @@ def solve_pde_euler():
     u_explicit = explicit_solution(u_explicit, x, t, params)
 
     # ERROR
-    error = u_explicit-u_euler
+    error = abs(u_euler-u_explicit)
 
     # Plot solution
-    plot_solution.plot_3d_solution(t, x, u_euler, 't [s]', 'x', 'EULER: u')#, value_range=[-0.5, 0.5])
-    plot_solution.plot_3d_solution(t, x, u_explicit, 't [s]', 'x [cm]', 'EXPLICIT: u')#, value_range=[-2.2e-14, 2e-15])
-    plot_solution.plot_3d_solution(t, x, error, 't [s]', 'x [cm]', 'ERROR')
+    plot_solution.plot_3d_solution(t, x, u_euler, 't', 'x [m}', 'EULER: u')
+    plot_solution.plot_3d_solution(t, x, u_explicit, 't', 'x [m]', 'ANALYTIC: u')
+    plot_solution.plot_3d_solution(t, x, error, 't', 'x [m]', 'ERROR')
     plt.show()

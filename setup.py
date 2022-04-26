@@ -26,5 +26,5 @@ setuptools.setup(
         'Programming Language :: Python :: 3',
         'Natural Language :: English',
     ],
-    python_requires='>=3.9',
+    python_requires='==3.9',
 )
