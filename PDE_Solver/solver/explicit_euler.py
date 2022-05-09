@@ -31,8 +31,7 @@ def define_boundary_conditions(u_values, x_values):
 
 
 def perform_euler_algorithm(u_values, input_params):
-    alpha = input_params.dt / input_params.dx
-
+    alpha = input_params.dt / (input_params.dx**2)
     t_indices = range(input_params.num_time_steps + 1)  # r range does not include right boundary. i.e. range(1)=0
     x_indices = range(input_params.num_x_steps + 1)
 
@@ -46,12 +45,12 @@ def perform_euler_algorithm(u_values, input_params):
 
 
 def explicit_solution(u_values_exp, x_values, t_values, input_params):
-    t_indices = range(input_params.num_time_steps)  # r range does not include right boundary. i.e. range(1)=0
+    t_indices = range(input_params.num_time_steps)  # range does not include right boundary. i.e. range(1)=0
     x_indices = range(input_params.num_x_steps)
 
     for t_index in t_indices:
         for x_index in x_indices:
-            u_values_exp[x_index, t_index] = np.sin(np.pi * x_values[x_index]) * np.exp(-t_values[t_index] * np.pi ** 2)
+            u_values_exp[x_index, t_index] = np.sin(np.pi * x_values[x_index]) * np.exp(-t_values[t_index] * (np.pi ** 2))
 
     return u_values_exp
 
