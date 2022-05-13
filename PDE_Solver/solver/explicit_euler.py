@@ -1,5 +1,5 @@
 """Script to perform explicit Euler algorithm."""
-from PDE_Solver.solver import parameters
+from PDE_Solver.solver import euler_parameters
 from PDE_Solver.utils import plot_solution
 
 import numpy as np
@@ -31,7 +31,7 @@ def define_boundary_conditions(u_values, x_values):
 
 
 def perform_euler_algorithm(u_values, input_params):
-    alpha = input_params.dt / (input_params.dx**2)
+    alpha = input_params.dt / (input_params.dx ** 2)
     t_indices = range(input_params.num_time_steps + 1)  # r range does not include right boundary. i.e. range(1)=0
     x_indices = range(input_params.num_x_steps + 1)
 
@@ -50,14 +50,15 @@ def explicit_solution(u_values_exp, x_values, t_values, input_params):
 
     for t_index in t_indices:
         for x_index in x_indices:
-            u_values_exp[x_index, t_index] = np.sin(np.pi * x_values[x_index]) * np.exp(-t_values[t_index] * (np.pi ** 2))
+            u_values_exp[x_index, t_index] = np.sin(np.pi * x_values[x_index]) * np.exp(
+                -t_values[t_index] * (np.pi ** 2))
 
     return u_values_exp
 
 
 def solve_pde_euler():
     # Load parameters
-    params = parameters.Parameters()
+    params = euler_parameters.Parameters()
 
     # Initialize output array
     u_euler = initialize_output(params)
@@ -78,10 +79,14 @@ def solve_pde_euler():
     u_explicit = explicit_solution(u_explicit, x, t, params)
 
     # ERROR
-    error = abs(u_euler-u_explicit)
+    error = abs(u_euler - u_explicit)
 
     # Plot solution
     plot_solution.plot_3d_solution(t, x, u_euler, 't', 'x [m}', 'EULER: u')
     plot_solution.plot_3d_solution(t, x, u_explicit, 't', 'x [m]', 'ANALYTIC: u')
     plot_solution.plot_3d_solution(t, x, error, 't', 'x [m]', 'ERROR')
     plt.show()
+
+
+if __name__ == "__main__":
+    solve_pde_euler()
