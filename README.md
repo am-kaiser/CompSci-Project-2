@@ -1,10 +1,14 @@
 # Computational Physics and Machine Learning: Project 2
 
-This repository contains scripts to solve partial differential equations with neural networks. This repository was setup for project 2 of the lecture Computational Physics and Machine Learning.
-## More information:
+This repository contains scripts to solve partial differential equations with the Euler method and neural networks.
+Moreover, a neural network algorithm is used to solve an eigenvalue problem. This repository was setup for project 2 of the lecture Computational Physics and Machine Learning.
+## More information
+* [Task Description](documentation/project_task.pdf)
+* Scripts for Euler Solver can be found [here](PDE_Solver_Euler)
+* Scripts for Neural Network Solver can be found [here](PDE_Solver_Neural)
+* Scripts for Eigenvalue Problem Solver can be found [here](Eigen_Solver)
 
-
-## How to setup
+## How to setup (for Euler Solver)
 1. Create conda environment
 ```python
 conda create --name compsci_project_2 --file requirements.txt
